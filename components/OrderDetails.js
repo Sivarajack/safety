@@ -1,18 +1,53 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { AppContext } from "../context/AppContext";
 import CustomButton from "./../commonComponents/CustomButton";
 import CustomSelect from "./../commonComponents/CustomSelect";
 import CustomRadio from "./../commonComponents/CustomRadio";
 import CustomDatePicker from "./../commonComponents/CustomDatePicker";
-
+import Loading from "./../commonComponents/Loading";
 import Input from "./../commonComponents/Input";
+
 function OrderDetails() {
-  const { control, handleSubmit,watch } = useContext(AppContext);
+  const { control, handleSubmit, watch } = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const apiconnect = async (payload) => {
+    setModalVisible(true);
+    try {
+      let response = await fetch(
+        "https://data.mongodb-api.com/app/data-vsevf/endpoint/data/beta/action/insertOne",
+        {
+          method: "post",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "api-key":
+              "NhXQe1LKtbeXGFwSB7jI1gN4N1w9NRbhWdQJsC7nCO7ZY77lGyd7Yb1pl7wilZkL",
+          },
+          body: JSON.stringify({
+            dataSource: "Cluster0",
+            database: "customer_details",
+            collection: "data",
+            document: payload,
+          }),
+        }
+      );
+      let responseJson = await response.json();
+      console.log(responseJson);
+      setModalVisible(false);
+      return responseJson;
+    } catch (error) {
+      setModalVisible(false);
+      console.error(error);
+    }
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
+        {modalVisible && <Loading />}
         <CustomRadio
           control={control}
           name="orderType"
@@ -38,7 +73,12 @@ function OrderDetails() {
           number
           required
         />
-        <CustomDatePicker name="date" mode="date" control={control} watch={watch}/>
+        <CustomDatePicker
+          name="date"
+          mode="date"
+          control={control}
+          watch={watch}
+        />
         <CustomSelect
           required
           control={control}
@@ -84,7 +124,7 @@ function OrderDetails() {
         <CustomButton
           handleSubmit={handleSubmit}
           title="Next"
-          submitFunction={handleSubmit((data) => console.log(data))}
+          submitFunction={handleSubmit((payload) => apiconnect(payload))}
         />
       </View>
     </ScrollView>

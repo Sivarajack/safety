@@ -1,16 +1,16 @@
-import React from 'react'
-import { useContext } from 'react';
+import React from "react";
+import { useContext } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { AppContext } from '../context/AppContext';
+import { AppContext } from "../context/AppContext";
 import CustomButton from "./../commonComponents/CustomButton";
 import CustomSelect from "./../commonComponents/CustomSelect";
-
 import Input from "./../commonComponents/Input";
-function ClientDetails({navigation}) {
-    const {control,handleSubmit,watch}=useContext(AppContext)
-    return (
-        <ScrollView>
-        <View style={styles.container}>
+
+function ClientDetails({ navigation }) {
+  const { control, handleSubmit, watch } = useContext(AppContext);
+  return (
+    <ScrollView>
+      <View style={styles.container}>
         {/* <View style={styles.subHeader}>
           <Text style={{ fontSize: 18 }}>Client Details</Text>
         </View> */}
@@ -73,36 +73,34 @@ function ClientDetails({navigation}) {
         <CustomButton
           handleSubmit={handleSubmit}
           title="Next"
-          submitFunction={handleSubmit((data) => navigation.push('Order'))}
+          submitFunction={handleSubmit((data) => navigation.push("Order"))}
         />
-
       </View>
-      </ScrollView>
-    )
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      display:"flex",
-      alignItems:"center",
-      backgroundColor: "#f0f0f0",
-      justifyContent: "space-between",
-    },
-  
+  container: {
+    display: "flex",
+    marginTop: 10,
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    justifyContent: "space-between",
+  },
 
-    subHeader: {
-      marginTop: 10,
-      marginBottom: 10,
-      paddingLeft: 20,
-      paddingRight: 20,
-      display: "flex",
-      alignSelf: "stretch",
-      alignItems: "flex-start",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-  });
-  
+  subHeader: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    display: "flex",
+    alignSelf: "stretch",
+    alignItems: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+});
 
-export default ClientDetails
+export default ClientDetails;
