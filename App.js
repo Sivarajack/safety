@@ -7,6 +7,7 @@ import { AppContext } from "./context/AppContext";
 import OrderDetails from "./components/OrderDetails";
 import Home from "./components/Home";
 import FilterOrders from "./components/FilterOrders";
+import Insight from "./components/Insight";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -50,6 +51,11 @@ export default function App() {
               component={OrderDetails}
               options={{ title: "OrderDetails" }}
             />
+            <Stack.Screen
+              name="Insights"
+              component={Insight}
+              options={{ title: "Insight" }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </AppContext.Provider>
@@ -64,12 +70,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-
   header: {
     marginTop: 35,
     padding: 10,
     display: "flex",
-
     width: "100%",
     backgroundColor: "#293964",
   },

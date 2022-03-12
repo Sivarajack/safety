@@ -11,9 +11,9 @@ function ClientDetails({ navigation }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/* <View style={styles.subHeader}>
+        <View style={styles.subHeader}>
           <Text style={{ fontSize: 18 }}>Client Details</Text>
-        </View> */}
+        </View>
         <Input
           control={control}
           placeholder="CompanyName"
