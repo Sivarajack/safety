@@ -1,29 +1,23 @@
 import {
   StyleSheet,
-  Text,
   View,
-  Pressable,
-  Modal,
-  Button,
   TouchableOpacity,
   ScrollView,
+  Text,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useContext } from "react";
-import CustomSelect from "./../commonComponents/CustomSelect";
 import CardText from "../commonComponents/CardView";
-import { AppContext } from "../context/AppContext";
 import Loading from "../commonComponents/Loading";
-import CustomButton from "../commonComponents/CustomButton";
 import dateCheck from "../commonComponents/util";
 import moment from "moment";
+import RadioForm from "react-native-simple-radio-button";
+import { Searchbar } from "react-native-paper";
 
 const Insight = () => {
-  const [showModal, setshowModal] = useState(false);
   const [details, setDetails] = useState();
   const [SelectedData, setSelectedData] = useState();
   const [loading, setLoading] = useState(false);
-  const { control, handleSubmit, watch } = useContext(AppContext);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   useEffect(() => {
     const getOrders = async () => {
@@ -49,6 +43,7 @@ const Insight = () => {
         let responseJson = await response.json();
 
         setDetails(responseJson.documents);
+        setSelectedData(responseJson.documents);
         setLoading(false);
         return responseJson;
       } catch (error) {
@@ -58,59 +53,6 @@ const Insight = () => {
     getOrders();
   }, []);
 
-  const ModalFilter = () => {
-    return (
-      <Modal animationType="none" transparent={true} visible={showModal}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text
-              style={{
-                fontSize: 25,
-                fontWeight: "bold",
-                marginBottom: 30,
-              }}
-            >
-              Select the Month
-            </Text>
-            <CustomSelect
-              required
-              control={control}
-              name="nextRefill"
-              options={["1", "2", "3", "4", "5", "6"]}
-              placeholder="---Next Refill---"
-            />
-            {/*  <CustomSelect
-              required
-              control={control}
-              name="customerType"
-              options={["office", "school", "residence", "shop", "others"]}
-              placeholder="---CustomerType---"
-            />
-           
-            <CustomSelect
-              required
-              control={control}
-              name="status"
-              options={["Installation Completed", "Installation Pending"]}
-              placeholder="---Installation Status---"
-            />
-            <CustomSelect
-              control={control}
-              name="orderType"
-              options={["dcp", "abc", "co2", "foam"]}
-              placeholder="---Order Type---"
-            /> */}
-            <CustomButton
-              handleSubmit={handleSubmit}
-              title="Submit"
-              submitFunction={handleSubmit((payload) => apiconnect(payload))}
-            />
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
   const cardView = (data) => {
     return (
       <TouchableOpacity onPress={(value) => {}}>
@@ -118,30 +60,60 @@ const Insight = () => {
       </TouchableOpacity>
     );
   };
-
-  const apiconnect = (payload) => {
-    setshowModal(false);
-    const start = moment();
-    const end = moment().add(Number(payload.nextRefill), "months");
-    let filteredData = details.filter((a) =>
-      dateCheck(start, end, a.refillDate)
-    );
-    setSelectedData(filteredData);
+  const onChange = (value) => {
+    console.log(value);
+    let start = moment();
+    let end = moment().add(Number(value), "months");
+    if (value === "All") {
+      setSelectedData(details);
+    } else if (typeof value === "number") {
+      let filteredData = details.filter((a) =>
+        dateCheck(start, end, a.refillDate)
+      );
+      // setSelectedData(filteredData);
+    } else {
+      let filteredData = details.filter((a) => a.ManagerName === searchQuery);
+      setSelectedData(filteredData);
+    }
+    return;
   };
-
+  const Filter = () => {
+    return (
+      <RadioForm
+        labelStyle={{ marginRight: 20 }}
+        formHorizontal={true}
+        labelHorizontal={true}
+        radio_props={[
+          { label: "All   ", value: "All" },
+          { label: "1  ", value: 1 },
+          { label: "2  ", value: 2 },
+          { label: "3  ", value: 3 },
+          { label: "4  ", value: 4 },
+        ]}
+        initial={0}
+        onPress={(value, index) => onChange(value)}
+      />
+    );
+  };
+  const onChangeSearch = (query) => {
+    console.log("searchQuery", query);
+    setSearchQuery(query);
+  };
   return (
     <ScrollView>
       <View style={{ padding: 10 }}>
         {loading && <Loading />}
-        <Pressable
-          onPress={() => {
-            setshowModal(true);
-          }}
-        >
-          <Text>Filter Orders</Text>
-        </Pressable>
-        <ModalFilter />
-
+        <View style={styles.filter}>
+          <Text style={{ padding: 10 }}>Filter by refill months</Text>
+          <Filter />
+          <Text style={{ padding: 10 }}>Filter by Manager Name</Text>
+          <Searchbar
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+            onIconPress={onChange}
+          />
+        </View>
         {SelectedData && SelectedData.map((value) => cardView(value))}
       </View>
     </ScrollView>
@@ -172,5 +144,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 320,
+  },
+  filter: {
+    padding: 5,
+    backgroundColor: "white",
   },
 });
